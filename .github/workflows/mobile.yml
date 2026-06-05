@@ -190,6 +190,12 @@ jobs:
           cd easytier-contrib/easytier-android-stb
           chmod +x gradlew
 
+      - name: Download gradle-wrapper.jar
+        run: |
+          cd easytier-contrib/easytier-android-stb
+          mkdir -p gradle/wrapper
+          curl -L -o gradle/wrapper/gradle-wrapper.jar https://services.gradle.org/distributions/gradle-8.5-wrapper.jar
+
       - name: Build STB APK
         run: |
           cd easytier-contrib/easytier-android-stb
