@@ -194,7 +194,14 @@ jobs:
         run: |
           cd easytier-contrib/easytier-android-stb
           mkdir -p gradle/wrapper
-          curl -L -o gradle/wrapper/gradle-wrapper.jar https://services.gradle.org/distributions/gradle-8.5-wrapper.jar
+          # 使用 wget 下载，设置超时和重试
+          wget -t 5 -T 30 -O gradle/wrapper/gradle-wrapper.jar https://services.gradle.org/distributions/gradle-8.5-wrapper.jar
+          # 验证文件是否下载成功
+          if [ ! -f gradle/wrapper/gradle-wrapper.jar ] || [ ! -s gradle/wrapper/gradle-wrapper.jar ]; then
+            echo "Error: gradle-wrapper.jar download failed"
+            exit 1
+          fi
+          ls -la gradle/wrapper/
 
       - name: Build STB APK
         run: |
@@ -223,7 +230,7 @@ jobs:
   mobile-result:
     runs-on: ubuntu-latest
     needs: [ pre_job, build-mobile, build-stb ]
-    if: needs.pre_job.result == 'success' && needs.pre_job.outputs.should_skip != 'true' && !cancelled()
+    if: needs.pre_job.result == 'success' && needs.pre_job.outputs.should_skip != 'true' && !cancelled() || contains(needs.*.result, 'failure')
     steps:
       - name: Mark result as failed
         if: contains(needs.*.result, 'failure')
