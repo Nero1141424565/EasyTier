@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">EasyTier STB</string>
+    <string name="vpn_service_name">EasyTier VPN Service</string>
+    <string name="notification_channel_name">EasyTier STB Service</string>
+    <string name="notification_channel_desc">EasyTier 机顶盒后台服务</string>
+    <string name="notification_title">EasyTier 运行中</string>
+    <string name="start_service">启动服务</string>
+    <string name="stop_service">停止服务</string>
+    <string name="check_permission">检查权限</string>
+</resources>

@@ -6,6 +6,7 @@ on:
   pull_request:
     branches: ["develop", "main"]
     types: [opened, synchronize, reopened, ready_for_review]
+  workflow_dispatch: #【新增这行，开启页面手动构建按钮】
 
 concurrency:
   group: ${{ github.workflow }}-${{ github.event.pull_request.number || github.ref }}
