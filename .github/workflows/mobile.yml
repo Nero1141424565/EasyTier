@@ -74,13 +74,14 @@ jobs:
         uses: android-actions/setup-android@v3
         with:
           cmdline-tools-version: 12.0
-          packages: 'build-tools;34.0.0 ndk;26.0.10792818 platform-tools platforms;android-34 '
+          packages: 'build-tools;34.0.0 ndk;27.3.13750724 platform-tools platforms;android-34 '
 
       - name: Setup Android Environment
         run: |
           echo "$ANDROID_HOME/platform-tools" >> $GITHUB_PATH
-          echo "$ANDROID_HOME/ndk/26.0.10792818/toolchains/llvm/prebuilt/linux-x86_64/bin" >> $GITHUB_PATH
-          echo "NDK_HOME=$ANDROID_HOME/ndk/26.0.10792818/" >> $GITHUB_ENV
+          echo "$ANDROID_HOME/ndk/27.3.13750724/toolchains/llvm/prebuilt/linux-x86_64/bin" >> $GITHUB_PATH
+          echo "ANDROID_NDK_HOME=$ANDROID_HOME/ndk/27.3.13750724/" >> $GITHUB_ENV
+          echo "NDK_HOME=$ANDROID_HOME/ndk/27.3.13750724/" >> $GITHUB_ENV
 
       - name: Prepare build environment
         uses: ./.github/actions/prepare-build
@@ -135,6 +136,7 @@ jobs:
           - TARGET: armv7-linux-androideabi
             ARCH: armv7
     runs-on: ubuntu-latest
+    timeout-minutes: 60
     env:
       NAME: easytier
       TARGET: ${{ matrix.TARGET }}
@@ -157,13 +159,14 @@ jobs:
         uses: android-actions/setup-android@v3
         with:
           cmdline-tools-version: 12.0
-          packages: 'build-tools;34.0.0 ndk;26.0.10792818 platform-tools platforms;android-34 '
+          packages: 'build-tools;34.0.0 ndk;27.3.13750724 platform-tools platforms;android-34 '
 
       - name: Setup Android Environment
         run: |
           echo "$ANDROID_HOME/platform-tools" >> $GITHUB_PATH
-          echo "$ANDROID_HOME/ndk/26.0.10792818/toolchains/llvm/prebuilt/linux-x86_64/bin" >> $GITHUB_PATH
-          echo "NDK_HOME=$ANDROID_HOME/ndk/26.0.10792818/" >> $GITHUB_ENV
+          echo "$ANDROID_HOME/ndk/27.3.13750724/toolchains/llvm/prebuilt/linux-x86_64/bin" >> $GITHUB_PATH
+          echo "ANDROID_NDK_HOME=$ANDROID_HOME/ndk/27.3.13750724/" >> $GITHUB_ENV
+          echo "NDK_HOME=$ANDROID_HOME/ndk/27.3.13750724/" >> $GITHUB_ENV
 
       - name: Prepare build environment
         uses: ./.github/actions/prepare-build
@@ -190,18 +193,23 @@ jobs:
           cd easytier-contrib/easytier-android-stb
           chmod +x gradlew
 
-      - name: Download gradle-wrapper.jar
+      - name: Check gradle-wrapper.jar
         run: |
           cd easytier-contrib/easytier-android-stb
           mkdir -p gradle/wrapper
-          # 使用 wget 下载，设置超时和重试
-          wget -t 5 -T 30 -O gradle/wrapper/gradle-wrapper.jar https://services.gradle.org/distributions/gradle-8.5-wrapper.jar
-          # 验证文件是否下载成功
-          if [ ! -f gradle/wrapper/gradle-wrapper.jar ] || [ ! -s gradle/wrapper/gradle-wrapper.jar ]; then
-            echo "Error: gradle-wrapper.jar download failed"
-            exit 1
+          # 如果文件已存在且不为空，跳过下载
+          if [ -f gradle/wrapper/gradle-wrapper.jar ] && [ -s gradle/wrapper/gradle-wrapper.jar ]; then
+            echo "gradle-wrapper.jar already exists, skipping download"
+            ls -la gradle/wrapper/
+          else
+            echo "Downloading gradle-wrapper.jar..."
+            wget -t 5 -T 30 -O gradle/wrapper/gradle-wrapper.jar https://downloads.gradle.org/distributions/gradle-8.5-wrapper.jar
+            if [ ! -f gradle/wrapper/gradle-wrapper.jar ] || [ ! -s gradle/wrapper/gradle-wrapper.jar ]; then
+              echo "Error: gradle-wrapper.jar download failed"
+              exit 1
+            fi
+            ls -la gradle/wrapper/
           fi
-          ls -la gradle/wrapper/
 
       - name: Build STB APK
         run: |
