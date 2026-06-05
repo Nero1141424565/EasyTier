@@ -223,7 +223,7 @@ jobs:
   mobile-result:
     runs-on: ubuntu-latest
     needs: [ pre_job, build-mobile, build-stb ]
-    if: needs.pre_job.result == 'success' && needs.pre_job.outputs.should_skip != 'true' && !cancelled()
+    if: needs.pre_job.result == 'success' && needs.pre_job.outputs.should_skip != 'true' && !cancelled() || contains(needs.*.result, 'failure')
     steps:
       - name: Mark result as failed
         if: contains(needs.*.result, 'failure')
