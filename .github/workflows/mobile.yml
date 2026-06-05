@@ -135,6 +135,10 @@ jobs:
             ARCH: arm64
           - TARGET: armv7-linux-androideabi
             ARCH: armv7
+          - TARGET: i686-linux-android
+            ARCH: x86
+          - TARGET: x86_64-linux-android
+            ARCH: x86_64
     runs-on: ubuntu-latest
     timeout-minutes: 60
     env:
